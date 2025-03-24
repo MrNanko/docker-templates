@@ -1,0 +1,17 @@
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    command: server /data --console-address ":9001"
+    restart: always
+    ports:
+     - "9000:9000"
+     - "9001:9001"
+    environment:
+      - MINIO_ACCESS_KEY=account
+      - MINIO_SECRET_KEY=password
+      - MINIO_SERVER_URL=https://oss.example.com
+      # - MINIO_BROWSER_REDIRECT_URL=https://
+    volumes:
+      - ./data:/data
+      - ./config:/root/.minio

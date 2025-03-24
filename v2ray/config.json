@@ -1,0 +1,82 @@
+{
+    "stats": {},
+    "api": {
+        "tag": "api",
+        "services": [
+            "StatsService"
+        ]
+    },
+    "policy": {
+        "levels": {
+            "0": {
+                "statsUserUplink": true,
+                "statsUserDownlink": true
+            }
+        },
+        "system": {
+            "statsInboundUplink": true,
+            "statsInboundDownlink": true,
+            "statsOutboundUplink": true,
+            "statsOutboundDownlink": true
+        }
+    },
+    "inbounds": [
+        {
+            "tag": "tcp",
+            "port": 12580,
+            "protocol": "vmess",
+            "settings": {
+                "clients": [
+                    {
+                        "email": "user1",
+                        "id": "e163a8a0-a00d-4749-a926-f36bbdb121f6",
+                        "level": 0,
+                        "alterId": 0,
+                        "deadline": "2032-05-08"
+                    },
+                    {
+                        "email": "user2",
+                        "id": "e163a8a0-a00d-4749-a926-f36bbdb121f7",
+                        "level": 0,
+                        "alterId": 0,
+                        "deadline": "2032-05-08"
+                    }
+                ]
+            },
+            "streamSettings": {
+                "network": "ws",
+                "wsSettings": {
+                    "path": "/mask"
+                }
+            }
+        },
+        {
+            "listen": "127.0.0.1",
+            "port": 52113,
+            "protocol": "dokodemo-door",
+            "settings": {
+                "address": "127.0.0.1"
+            },
+            "tag": "api"
+        }
+    ],
+    "outbounds": [
+        {
+            "tag": "direct",
+            "protocol": "freedom",
+            "settings": {}
+        }
+    ],
+    "routing": {
+        "rules": [
+            {
+                "inboundTag": [
+                    "api"
+                ],
+                "outboundTag": "api",
+                "type": "field"
+            }
+        ],
+        "domainStrategy": "AsIs"
+    }
+}

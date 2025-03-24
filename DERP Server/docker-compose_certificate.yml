@@ -1,0 +1,18 @@
+services:
+  derper:
+    container_name: derper
+    image: fredliang/derper
+    restart: always
+    ports:
+      - "3478:3478/udp"
+      - 12443:443
+      - 12080:80
+    environment:
+      - DERP_DOMAIN=derper.domain.com
+      - DERP_CERT_MODE=manual
+      - DERP_ADDR=:443
+      - DERP_VERIFY_CLIENTS=false
+      - DERP_HTTP_PORT=80
+    volumes:
+      - ./derper.domain.com/:/app/certs
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock

@@ -1,0 +1,16 @@
+services:
+  mysql:
+    restart: always
+    image: mysql:5.7
+    hostname: mysql
+    container_name: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - ./database:/var/lib/mysql:Z
+      - ./init:/docker-entrypoint-initdb.d
+      - /etc/localtime:/etc/localtime:ro
+    command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci","--lower-case-table-names=1"]
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Asia/Shanghai

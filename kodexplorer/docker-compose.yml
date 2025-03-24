@@ -1,0 +1,11 @@
+services:
+  kodexplorer:
+    image: kodcloud/kodexplorer
+    container_name: kodexplorer
+    network_mode: nginx-net
+    external_links: 
+      - kodexplorer 
+    restart: always
+    volumes:
+      - ./data:/var/www/html
+      - /etc/localtime:/etc/localtime:ro 

@@ -1,0 +1,16 @@
+version: "3"
+services:
+  qbittorrent:
+    image: emmercm/qbittorrent:latest
+    restart: unless-stopped
+    environment:
+      - TZ=America/New_York
+    ports:
+      - 8080:8080
+      - 6881:6881/tcp
+      - 6881:6881/udp
+    volumes:
+      - ./config:/config
+      - ./data:/data
+      - ./downloads:/downloads
+      - ./incomplete:/incomplete

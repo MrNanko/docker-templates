@@ -1,0 +1,19 @@
+services:
+  nginx:
+    image: nginx:alpine
+    hostname: nginx
+    container_name: nginx
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    network_mode: nginx-net
+    external_links: 
+      - nginx 
+    volumes:
+      - ./log:/var/log/nginx
+      - ./share:/usr/share/nginx
+      - ./etc:/etc/nginx
+      - /etc/localtime:/etc/localtime:ro # Mount the host time directly into the container, with read-only permissions
+    environment:     
+      - TZ=Asia/Shanghai

@@ -1,0 +1,36 @@
+{
+  "derpMap": {
+    "OmitDefaultRegions": true,
+    "Regions": {
+      "900": {
+        "RegionID":   900,
+        "RegionCode": "hkg",
+        "RegionName": "Hong Kong",
+        "Nodes": [
+          {
+            "Name":     "certificate",
+            "RegionID": 900,
+            "HostName": "derper.domain.com",
+            "DERPPort": 12443,
+            "IPv4":     "xxx.xxx.xxx.xxx"
+          }
+        ]
+      },
+      "901": {
+        "RegionID":   901,
+        "RegionCode": "sh",
+        "RegionName": "Shang Hai",
+        "Nodes": [
+          {
+            "Name":             "ip",
+            "RegionID":         901,
+            "HostName":         "xxx.xxx.xxx.xxx",
+            "DERPPort":         12443,
+            "IPv4":             "xxx.xxx.xxx.xxx",
+            "InsecureForTests": true
+          }
+        ]
+      }
+    }
+  }
+}

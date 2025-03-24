@@ -1,0 +1,13 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    hostname: vaultwarden
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./data:/data
+      - /etc/localtime:/etc/localtime:ro 
+    environment:     
+      - TZ=Asia/Shanghai
