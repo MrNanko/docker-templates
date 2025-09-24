@@ -1,5 +1,5 @@
 services:
-  tailscale:
+  tailscaled:
     image: tailscale/tailscale:latest
     container_name: tailscale
     restart: unless-stopped
@@ -8,4 +8,4 @@ services:
     volumes:
       - /var/lib/tailscale:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
-    command: tailscaled --accept-dns=false
+    command: tailscaled
