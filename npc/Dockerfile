@@ -1,50 +1,40 @@
-# Stage 1: Python 环境构建阶段
-FROM python:3.11.8-alpine AS python-builder
-# 升级 pip、setuptools、wheel
-RUN python -m pip install --upgrade --no-cache-dir pip setuptools wheel
+FROM debian:bookworm-slim
 
-# Stage 2: Node 环境构建阶段
-FROM node:21.7.3-alpine AS node-builder
-# 此阶段可加入 Node 相关构建任务，例如 npm install
+ARG CODE_SERVER_VERSION=4.109.2
+ARG TARGETARCH
 
-# 最终镜像阶段：基于纯净的 Alpine 镜像
-FROM alpine:3.19
-
-# 从 python-builder 阶段复制 Python 环境
-COPY --from=python-builder /usr/local /usr/local
-# 从 node-builder 阶段复制 Node 环境
-COPY --from=node-builder /usr/local /usr/local
-
-# 安装运行时必须的依赖库（极简）
-RUN apk add --no-cache \
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
         bash \
-        dcron \
+        cron \
         tzdata \
-        libstdc++ \
         ca-certificates \
-        libffi \
-        openssl \
-        readline \
-        zlib \
-        expat \
-        bzip2 \
-        sqlite-libs \
         git \
         wget \
-    && ln -sf /usr/local/bin/python3 /usr/local/bin/python \
-    && ln -sf /usr/local/bin/pip3 /usr/local/bin/pip \
-    && rm -rf /var/cache/apk/*
+        python3 \
+        python3-pip; \
+    CODE_SERVER_ARCH="${TARGETARCH:-$(dpkg --print-architecture)}"; \
+    case "${CODE_SERVER_ARCH}" in \
+        amd64|arm64) ;; \
+        *) echo "Unsupported architecture: ${CODE_SERVER_ARCH}" >&2; exit 1 ;; \
+    esac; \
+    CODE_SERVER_TARBALL="code-server-${CODE_SERVER_VERSION}-linux-${CODE_SERVER_ARCH}.tar.gz"; \
+    wget -O "/tmp/${CODE_SERVER_TARBALL}" "https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/${CODE_SERVER_TARBALL}"; \
+    tar -xzf "/tmp/${CODE_SERVER_TARBALL}" -C /usr/lib; \
+    mv "/usr/lib/code-server-${CODE_SERVER_VERSION}-linux-${CODE_SERVER_ARCH}" /usr/lib/code-server; \
+    ln -sf /usr/lib/code-server/bin/code-server /usr/local/bin/code-server; \
+    ln -sf /usr/lib/code-server/lib/node /usr/local/bin/node; \
+    ln -sf /usr/bin/python3 /usr/local/bin/python; \
+    ln -sf /usr/bin/pip3 /usr/local/bin/pip; \
+    rm -f "/tmp/${CODE_SERVER_TARBALL}"; \
+    rm -rf /var/lib/apt/lists/*
 
-# 设置工作目录和创建必要目录
 WORKDIR /app
 
-# 将 docker-entrypoint.sh 脚本复制到镜像中并赋予执行权限
+COPY app/ /opt/app-template/
+
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# 可选：添加测试脚本
-# RUN echo "import sys\nprint('Python脚本执行成功 - ' + sys.version)" > /app/scripts/task.py
-# RUN echo "console.log('Node脚本执行成功 - ' + process.version + ' - ' + new Date().toISOString());" > /app/scripts/daily-job.js
-
-# 设置容器启动入口为 docker-entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

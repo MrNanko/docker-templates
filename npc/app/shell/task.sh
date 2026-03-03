@@ -66,7 +66,6 @@ case "$extension" in
     ;;
 esac
 
-# 安装定时任务（如果有 cron.list）
 if [ -f /app/config/cron.list ]; then
     crontab /app/config/cron.list
 else
