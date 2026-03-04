@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: npc:1.0.2
-    container_name: npc-dev
+    container_name: npc
     restart: always
     init: true
     ports:
@@ -13,4 +13,4 @@ services:
       - ./app:/app
     environment:
       TZ: Asia/Shanghai
-      CODE_SERVER_PASSWORD: ""
+      CODE_SERVER_PASSWORD: "password"
