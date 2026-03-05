@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Current File (task)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "/app/shell/task.sh \"${file}\"",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Run Custom Script (task)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "/app/shell/task.sh \"${input:taskScriptPath}\"",
+      "cwd": "${workspaceFolder}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "taskScriptPath",
+      "type": "promptString",
+      "description": "Script path to run via task (example: /app/run/demo.py or /app/run/demo.js)"
+    }
+  ]
+}
