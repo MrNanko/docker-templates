@@ -3,6 +3,9 @@ FROM debian:bookworm-slim
 ARG CODE_SERVER_VERSION=4.109.2
 ARG TARGETARCH
 
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
@@ -13,6 +16,7 @@ RUN set -eux; \
         git \
         wget \
         python3 \
+        python3-venv \
         python3-pip; \
     CODE_SERVER_ARCH="${TARGETARCH:-$(dpkg --print-architecture)}"; \
     case "${CODE_SERVER_ARCH}" in \
@@ -25,8 +29,19 @@ RUN set -eux; \
     mv "/usr/lib/code-server-${CODE_SERVER_VERSION}-linux-${CODE_SERVER_ARCH}" /usr/lib/code-server; \
     ln -sf /usr/lib/code-server/bin/code-server /usr/local/bin/code-server; \
     ln -sf /usr/lib/code-server/lib/node /usr/local/bin/node; \
-    ln -sf /usr/bin/python3 /usr/local/bin/python; \
-    ln -sf /usr/bin/pip3 /usr/local/bin/pip; \
+    if [ -f /usr/lib/code-server/lib/node_modules/npm/bin/npm-cli.js ]; then \
+        printf '%s\n' '#!/bin/sh' 'exec /usr/local/bin/node /usr/lib/code-server/lib/node_modules/npm/bin/npm-cli.js "$@"' > /usr/local/bin/npm; \
+        printf '%s\n' '#!/bin/sh' 'exec /usr/local/bin/node /usr/lib/code-server/lib/node_modules/npm/bin/npx-cli.js "$@"' > /usr/local/bin/npx; \
+        chmod +x /usr/local/bin/npm /usr/local/bin/npx; \
+    else \
+        apt-get install -y --no-install-recommends npm; \
+    fi; \
+    python3 -m venv "${VIRTUAL_ENV}"; \
+    "${VIRTUAL_ENV}/bin/pip" install --no-cache-dir --upgrade pip; \
+    ln -sf "${VIRTUAL_ENV}/bin/python" /usr/local/bin/python; \
+    ln -sf "${VIRTUAL_ENV}/bin/python3" /usr/local/bin/python3; \
+    ln -sf "${VIRTUAL_ENV}/bin/pip" /usr/local/bin/pip; \
+    ln -sf "${VIRTUAL_ENV}/bin/pip3" /usr/local/bin/pip3; \
     rm -f "/tmp/${CODE_SERVER_TARBALL}"; \
     rm -rf /var/lib/apt/lists/*
 
