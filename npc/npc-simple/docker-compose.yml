@@ -1,0 +1,23 @@
+services:
+  npc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: npc:1.0.2
+    container_name: npc
+    restart: always
+    init: true
+    network_mode: host
+    volumes:
+      - ./:/app
+    environment:
+      TZ: Asia/Shanghai
+    tty: true
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep crond || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks: {}
