@@ -50,15 +50,13 @@ if [ -n "${CODE_SERVER_PASSWORD:-}" ]; then
 fi
 
 # 判断 /app/shell/task.sh 是否存在，如果存在，则设置可执行权限并创建软链接到 /usr/local/bin/task
-if [ -f /app/shell/task.sh ]; then
-    chmod +x /app/shell/task.sh
-    ln -sf /app/shell/task.sh /usr/local/bin/task
-fi
-
-if [ -f /app/shell/clean.sh ]; then
-    chmod +x /app/shell/clean.sh
-    ln -sf /app/shell/clean.sh /usr/local/bin/clean
-fi
+for script in task clean; do
+    script_path="/app/shell/${script}.sh"
+    if [ -f "$script_path" ]; then
+        chmod +x "$script_path"
+        ln -sf "$script_path" "/usr/local/bin/${script}"
+    fi
+done
 
 echo "Initialization complete. Starting cron daemon..."
 if ! command -v cron > /dev/null 2>&1; then

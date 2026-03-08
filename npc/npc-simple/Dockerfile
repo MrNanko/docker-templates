@@ -24,6 +24,7 @@ RUN apk add --no-cache \
         sqlite-libs \
         git \
         wget \
+        curl \
     && ln -sf /usr/local/bin/python3 /usr/local/bin/python \
     && ln -sf /usr/local/bin/pip3 /usr/local/bin/pip \
     && rm -rf /var/cache/apk/*
